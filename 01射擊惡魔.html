@@ -64,7 +64,7 @@
     </style>
 </head>
 
-<body>    
+<body>
     <table id="game" border="1">
         <tr>
             <td class="hole"></td>
@@ -103,14 +103,14 @@
         </tr>
     </table><br>
     <div>
-    <input type="button" value="START" id="btn-start"><br>
-    目前分數:<span id="text-score">0</span>
-    剩餘時間:<span id="text-time">30</span>
-    <hr>
-    最高分:<br>
-    玩家:<span id="text-highplayer">沒有人</span><br>
-    分數:<span id="text-highscore">0</span>
-</div>
+        <input type="button" value="START" id="btn-start"><br>
+        目前分數:<span id="text-score">0</span>
+        剩餘時間:<span id="text-time">30</span>
+        <hr>
+        最高分:<br>
+        玩家:<span id="text-highplayer">沒有人</span><br>
+        分數:<span id="text-highscore">0</span>
+    </div>
 
     <script>
         const holes = document.getElementsByClassName("hole");
@@ -131,10 +131,10 @@
         let timer = 0;
         // 最高分
         let highscore = { name: '', score: 0 }
-        
+
         // 讀取 Storage  => localStorage.getItem()
         let storage = JSON.parse(localStorage.getItem("highscore"));
-               if (storage != null) {
+        if (storage != null) {
             // 將最高分記錄存入變數並修改網頁文字
             highscore.name = storage.name;
             textHighPlayer.innerText = highscore.name;
@@ -174,34 +174,68 @@
                 hole.classList.remove("moneyfly");
             }
 
-            
-            // 不要重複選取 未做
-           
+
+            // 不要重複選取 ok
+
+            let a = [];
+            // for (hole of holes) {
             for (let i = 0; i < 3; i++) {
-                const rand = Math.floor(Math.random() * 25)
-                 holes[rand].classList.add("angle");
-               
-            }for (let i = 0; i < 3; i++) {
-                const rand = Math.floor(Math.random() * 25)
+                const rand = Math.floor(Math.random() * 25);
+                if (a.includes(rand)) {
+                    i--;
+                    continue;
+                }
+                a.push(rand);
+                console.log(a)
+
+                holes[rand].classList.add("angle");
+
+            }
+
+            for (let i = 0; i < 3; i++) {
+                const rand = Math.floor(Math.random() * 25);
+                if (a.includes(rand)) {
+                    i--;
+                    continue;
+                }
+                a.push(rand);
+                console.log(a)
+
                 holes[rand].classList.add("devil");
-                
+
             }
             for (let i = 0; i < 1; i++) {
-                const rand = Math.floor(Math.random() * 25)
+                const rand = Math.floor(Math.random() * 25);
+                if (a.includes(rand)) {
+                    i--;
+                    continue;
+                }
+                a.push(rand);
+                console.log(a)
+
                 holes[rand].classList.add("landgod");
+
             }
             for (let i = 0; i < 1; i++) {
-                const rand = Math.floor(Math.random() * 25)
+                const rand = Math.floor(Math.random() * 25);
+                if (a.includes(rand)) {
+                    i--;
+                    continue;
+                }
+                a.push(rand);
+                console.log(a)
+
                 holes[rand].classList.add("badgod");
-            }                
-            
-            
+
+            }
+
+
             timeleft--;
             textTime.innerText = timeleft;
 
             // 如果時間到了
-            if (timeleft == 0 ||timeleft<0) {
-                
+            if (timeleft == 0 || timeleft < 0) {
+
                 inGame = false;
                 // 停止計時器
                 clearInterval(timer);
@@ -226,9 +260,9 @@
                     if (storage == null || score > highscore.score) {
                         // 播放音效
                         yay.play();
-                       
+
                         const input = prompt("恭喜最高分，請輸入名字");
-                        
+
                         if (input != null && input.trim() != '') {
                             // 將輸入的名字與分數存入變數
                             highscore.score = score;
@@ -248,33 +282,33 @@
         for (let hole of holes) {
             // 對格子點擊
             hole.onclick = () => {
-                
+
                 if (inGame && hole.classList.contains("devil")) {
                     // 標記為按下去
                     hole.classList.add("black");
                     hole.classList.remove("devil");
-                    
+
                     score++;
                     textScore.innerText = score;
                 }
-                else if(inGame && hole.classList.contains("angle")){
+                else if (inGame && hole.classList.contains("angle")) {
                     hole.classList.add("anglepass");
                     hole.classList.remove("angle");
                     score--;
                     textScore.innerText = score;
                 }
-                else if (inGame && hole.classList.contains("landgod")){
+                else if (inGame && hole.classList.contains("landgod")) {
                     hole.classList.add("moneyfly");
                     hole.classList.remove("landgod");
-                    
+
                     timeleft -= 10;
                     timeleft.innerText = timeleft;
                 }
-                else if((inGame && hole.classList.contains("badgod"))){
+                else if ((inGame && hole.classList.contains("badgod"))) {
                     hole.classList.add("money");
                     hole.classList.remove("badgod");
 
-                    timeleft +=10;
+                    timeleft += 10;
                     timeleft.innerText = timeleft;
                 }
             }
