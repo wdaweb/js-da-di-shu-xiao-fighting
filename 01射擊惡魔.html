@@ -6,14 +6,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
+       @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700&display=swap');
+
+        body{
+            height: 1080px;
+            background-image: radial-gradient(white, #FFFFAA, pink); 
+            /* background-size: cover; */
+            /* background-repeat: no-repeat; */
+            z-index: -2;
+            font-family: 'Noto Sans TC', sans-serif;
+            font-size: larger;
+            
+        }
         table {
             position: relative;
             left: 30%;
+            background:bisque;
+            /* border-spacing: 5px; */
+            z-index: 2;
         }
 
         div {
             position: absolute;
             left: 30%;
+            z-index: 2;
         }
 
         .hole {
@@ -23,13 +39,13 @@
             background: white;
         }
 
-        .angle {
-            background-image: url(image/angle.png);
+        .angel {
+            background-image: url(image/angel.png);
             background-repeat: no-repeat;
         }
 
-        .anglepass {
-            background-image: url(image/anglepass.png);
+        .angelpass {
+            background-image: url(image/angelpass.png);
             background-repeat: no-repeat;
         }
 
@@ -61,10 +77,59 @@
             background-image: url(image/moneyfly.png);
             background-repeat: no-repeat;
         }
+
+        #rightimg{
+            position: fixed;
+            top:140px;
+            left:77%;
+            float: left;
+            /* background-attachment: fixed; */
+            z-index: 0;
+        }
+
+        #leftimg{
+            position: fixed;
+            top:150px;
+            left:7%;
+            float: right;
+            z-index: 0;
+        }
+        input{
+            padding: 0;
+            width: 130px;
+            height: 30px;
+        }
+        #isdevil{
+            position:fixed;
+            left: 10%;
+            top:100px;
+            float: left;
+            z-index: 0;
+            background-color:brown;
+            color:white;
+            font-family: 'Noto Sans TC', sans-serif;
+            font-size: large;
+            
+        }
+        #isangel{
+            position:fixed;
+            top:100px;
+            left: 80%;
+            float: right;
+            z-index: 0;
+            background-color:lightskyblue;
+            color:white;
+            font-family: 'Noto Sans TC', sans-serif;
+            font-size: large;
+           
+        }
+
     </style>
 </head>
 
 <body>
+    <img src="image/rightbg1.png" id="rightimg">
+    <img src="image/leftbg1.png" id="leftimg">
     <table id="game" border="1">
         <tr>
             <td class="hole"></td>
@@ -102,10 +167,12 @@
             <td class="hole"></td>
         </tr>
     </table><br>
-    <div>
-        <input type="button" value="START" id="btn-start"><br>
+    <input type="button" value="玩家是惡魔" id="isdevil">
+    <input type="button" value="玩家是天使" id="isangel">
+    <div>       
+        
         目前分數:<span id="text-score">0</span>
-        剩餘時間:<span id="text-time">30</span>
+        剩餘時間:<span id="text-time">20</span>
         <hr>
         最高分:<br>
         玩家:<span id="text-highplayer">沒有人</span><br>
@@ -114,11 +181,13 @@
 
     <script>
         const holes = document.getElementsByClassName("hole");
-        const btnStart = document.getElementById("btn-start");
+        const btnisangel = document.getElementById("isangel");
+        const btnisdevil = document.getElementById("isdevil");               
         const textScore = document.getElementById("text-score");
         const textTime = document.getElementById("text-time");
         const textHighPlayer = document.getElementById("text-highplayer");
         const textHighScore = document.getElementById("text-highscore");
+        // 音效
         const yay = new Audio();
         yay.src = "./yay.mp3";
         // 分數
@@ -126,7 +195,7 @@
         // 是否在遊戲中
         let inGame = false;
         // 剩餘秒數
-        let timeleft = 30;
+        let timeleft = 20;
         // 計時器
         let timer = 0;
         // 最高分
@@ -142,10 +211,11 @@
             textHighScore.innerText = highscore.score;
         }
 
-        // 先點擊才會遊戲開始
-        btnStart.onclick = () => {
+        // 先點擊天使按鈕才會遊戲開始
+        btnisangel.onclick = () => {
             // 點擊開始後,就不可以再點開始  disable(為停用開始按鈕)
-            btnStart.disabled = true;
+            btnisangel.disabled = true;
+            btnisdevil.disabled = true;
             // 設定每秒變換一次
             timer = setInterval(game, 1000);
             // 立即出現
@@ -156,16 +226,52 @@
             // 設定狀態為遊戲中
             inGame = true;
             // 重設時間
-            timeleft = 30;
+            timeleft = 20;
             textTime.innerText = timeleft;
+
+
+            for (let hole of holes) {
+            // 對格子點擊
+            hole.onclick = () => {
+
+                if (inGame && hole.classList.contains("devil")) {
+                    // 標記為按下去
+                    hole.classList.add("black");
+                    hole.classList.remove("devil");
+
+                    score++;
+                    textScore.innerText = score;
+                }
+                else if (inGame && hole.classList.contains("angel")) {
+                    hole.classList.add("angelpass");
+                    hole.classList.remove("angel");
+                    score--;
+                    textScore.innerText = score;
+                }
+                else if (inGame && hole.classList.contains("landgod")) {
+                    hole.classList.add("moneyfly");
+                    hole.classList.remove("landgod");
+
+                    timeleft -= 20;
+                    timeleft.innerText = timeleft;
+                }
+                else if ((inGame && hole.classList.contains("badgod"))) {
+                    hole.classList.add("money");
+                    hole.classList.remove("badgod");
+
+                    timeleft += 5;
+                    timeleft.innerText = timeleft;
+                }
+            }
+            }
         }
         const game = () => {
 
             // 清除格字的class            
             for (let hole of holes) {
                 // classList 是只讀屬性，並會返回元素類名.                
-                hole.classList.remove("angle");
-                hole.classList.remove("anglepass");
+                hole.classList.remove("angel");
+                hole.classList.remove("angelpass");
                 hole.classList.remove("devil");
                 hole.classList.remove("black");
                 hole.classList.remove("landgod");
@@ -188,7 +294,7 @@
                 a.push(rand);
                 console.log(a)
 
-                holes[rand].classList.add("angle");
+                holes[rand].classList.add("angel");
 
             }
 
@@ -229,20 +335,19 @@
 
             }
 
-
             timeleft--;
             textTime.innerText = timeleft;
 
-            // 如果時間到了
-            if (timeleft == 0 || timeleft < -1) {
+            // 如果時間到了   有一個bug
+            if (0 >= timeleft ) {
 
                 inGame = false;
                 // 停止計時器
                 clearInterval(timer);
                 // 清除格字的class
                 for (let hole of holes) {
-                    hole.classList.remove("angle");
-                    hole.classList.remove("anglepass");
+                    hole.classList.remove("angel");
+                    hole.classList.remove("angelpass");
                     hole.classList.remove("devil");
                     hole.classList.remove("black");
                     hole.classList.remove("landgod");
@@ -252,8 +357,9 @@
                 }
                 // 啟用開始按鈕
                 setTimeout(() => {
-                    btnStart.disabled = false;
                     alert(`你得到${score} 分`);
+                    btnisangel.disabled = false;
+                    btnisdevil.disabled = false;
 
 
                     // 如果沒有分數紀錄，或是大於目前分數
@@ -275,11 +381,30 @@
                             localStorage.setItem("highscore", JSON.stringify(highscore));
                         }
                     }
-                }, 1)
+                }, 0.1)
             }
         }
 
-        for (let hole of holes) {
+        // 先點擊惡魔按鈕才會遊戲開始
+        btnisdevil.onclick = () => {
+            // 點擊開始後,就不可以再點開始  disable(為停用開始按鈕)
+            btnisdevil.disabled = true;
+            btnisangel.disabled = true;
+            // 設定每秒變換一次
+            timer = setInterval(game, 1000);
+            // 立即出現
+            game();
+            // 每次遊戲開始重置分數
+            score = 0;
+            textScore.innerText = score;
+            // 設定狀態為遊戲中
+            inGame = true;
+            // 重設時間
+            timeleft = 20;
+            textTime.innerText = timeleft;
+
+
+            for (let hole of holes) {
             // 對格子點擊
             hole.onclick = () => {
 
@@ -288,32 +413,34 @@
                     hole.classList.add("black");
                     hole.classList.remove("devil");
 
-                    score++;
-                    textScore.innerText = score;
-                }
-                else if (inGame && hole.classList.contains("angle")) {
-                    hole.classList.add("anglepass");
-                    hole.classList.remove("angle");
                     score--;
                     textScore.innerText = score;
                 }
-                else if (inGame && hole.classList.contains("landgod")) {
-                    hole.classList.add("moneyfly");
-                    hole.classList.remove("landgod");
-
-                    timeleft -= 20;
-                    timeleft.innerText = timeleft;
+                else if (inGame && hole.classList.contains("angel")) {
+                    hole.classList.add("angelpass");
+                    hole.classList.remove("angel");
+                    score++;
+                    textScore.innerText = score;
                 }
-                else if ((inGame && hole.classList.contains("badgod"))) {
+                else if (inGame && hole.classList.contains("landgod")) {
                     hole.classList.add("money");
-                    hole.classList.remove("badgod");
+                    hole.classList.remove("landgod");
 
                     timeleft += 5;
                     timeleft.innerText = timeleft;
                 }
+                else if ((inGame && hole.classList.contains("badgod"))) {
+                    hole.classList.add("moneyfly");
+                    hole.classList.remove("badgod");
+
+                    timeleft -= 20;
+                    timeleft.innerText = timeleft;
+                }
             }
         }
-
+        
+        }
+ 
 
     </script>
 
