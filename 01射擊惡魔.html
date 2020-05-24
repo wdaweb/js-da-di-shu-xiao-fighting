@@ -16,20 +16,20 @@
             z-index: -2;
             font-family: 'Noto Sans TC', sans-serif;
             font-weight: 500;
-
         }
 
         table {
             position: relative;
-            left: 650px;
+            left: 30%;
             background: bisque;
             /* border-spacing: 5px; */
             z-index: 2;
+            cursor: url(./image/cursor黑.png) 50 50, auto;
         }
 
         div {
             position: absolute;
-            left: 650px;
+            left: 30%;
             z-index: 2;
         }
 
@@ -82,15 +82,16 @@
         #rightimg {
             position: fixed;
             top: 140px;
-            right: 300px;
+            left: 80%;
             float: left;
+            /* background-attachment: fixed; */
             z-index: 0;
         }
 
         #leftimg {
             position: fixed;
             top: 150px;
-            left: 12%;
+            left: 7%;
             float: right;
             z-index: 0;
         }
@@ -103,7 +104,7 @@
 
         #isdevil {
             position: fixed;
-            left: 14%;
+            left: 10%;
             top: 100px;
             float: left;
             z-index: 0;
@@ -117,7 +118,7 @@
         #isangel {
             position: fixed;
             top: 100px;
-            right: 325px;
+            left: 82%;
             float: right;
             z-index: 0;
             background-color: lightskyblue;
@@ -177,8 +178,8 @@
         剩餘時間:<span id="text-time">20</span>
         <hr>
         最高分:<br>
-        玩家:<span id="text-highplayer">沒有人</span><br>
-        分數:<span id="text-highscore">0</span>
+        玩家:<span id="text-highplayer">電腦</span><br>
+        分數:<span id="text-highscore">1</span>
     </div>
 
     <script>
@@ -201,7 +202,7 @@
         // 計時器
         let timer = 0;
         // 最高分
-        let highscore = { name: '', score: 0 }
+        let highscore = { name: '123', score: 0 }
 
         // 讀取 Storage  => localStorage.getItem()
         let storage = JSON.parse(localStorage.getItem("highscore"));
@@ -218,7 +219,7 @@
             // 點擊開始後,就不可以再點開始  disable(為停用開始按鈕)
             btnisangel.disabled = true;
             btnisdevil.disabled = true;
-            // 重設時間  要放在呼叫game()前
+            // 重設時間
             timeleft = 20;
             textTime.innerText = timeleft;
             // 設定每秒變換一次
@@ -230,7 +231,6 @@
             textScore.innerText = score;
             // 設定狀態為遊戲中
             inGame = true;
-
 
 
             for (let hole of holes) {
@@ -308,7 +308,7 @@
                     continue;
                 }
                 a.push(rand);
-                console.log(a)
+                // console.log(a)
 
                 holes[rand].classList.add("devil");
 
@@ -320,7 +320,7 @@
                     continue;
                 }
                 a.push(rand);
-                console.log(a)
+                // console.log(a)
 
                 holes[rand].classList.add("landgod");
 
@@ -332,7 +332,7 @@
                     continue;
                 }
                 a.push(rand);
-                console.log(a)
+                // console.log(a)
 
                 holes[rand].classList.add("badgod");
 
@@ -341,8 +341,8 @@
             timeleft--;
             textTime.innerText = timeleft;
 
-            // 如果時間到了   
-            if (0 >= timeleft) {
+            // 如果時間到了  bug解決
+            if (timeleft == 0 || timeleft < -1) {
 
                 inGame = false;
                 // 停止計時器
@@ -363,28 +363,28 @@
                     btnisangel.disabled = false;
                     btnisdevil.disabled = false;
                     alert(`你得到${score} 分`);
-
-
-                    // 如果沒有分數紀錄，或是大於目前分數
-                    if (storage == null || score > highscore.score) {
-                        // 播放音效
-                        yay.play();
-
-                        const input = prompt("恭喜最高分，請輸入名字");
-
-                        if (input != null && input.trim() != '') {
-                            // 將輸入的名字與分數存入變數
-                            highscore.score = score;
-                            highscore.name = input;
-                            // 修改最高分文字
-                            textHighPlayer.innerText = highscore.name;
-                            textHighScore.innerText = highscore.score;
-                            // 將最高分變數轉文字後存入localStroage  更新 Storage =>storage.setItem(keyName, keyValue);
-                            // 將 JSON 物件（Object）轉成字串後，才能儲存或傳送   JSON.stringify()==json 字串化
-                            localStorage.setItem("highscore", JSON.stringify(highscore));
-                        }
-                    }
                 }, 0.1)
+
+
+                // 如果沒有分數紀錄，或是大於目前分數
+                if (storage == null || score > highscore.score) {
+                    // 播放音效
+                    yay.play();
+
+                    const input = prompt("恭喜最高分，請輸入名字");
+
+                    if (input != null && input.trim() != '') {
+                        // 將輸入的名字與分數存入變數
+                        highscore.score = score;
+                        highscore.name = input;
+                        // 修改最高分文字
+                        textHighPlayer.innerText = highscore.name;
+                        textHighScore.innerText = highscore.score;
+                        // 將最高分變數轉文字後存入localStroage  更新 Storage =>storage.setItem(keyName, keyValue);
+                        // 將 JSON 物件（Object）轉成字串後，才能儲存或傳送   JSON.stringify()==json 字串化
+                        localStorage.setItem("highscore", JSON.stringify(highscore));
+                    }
+                }
             }
         }
 
@@ -393,7 +393,7 @@
             // 點擊開始後,就不可以再點開始  disable(為停用開始按鈕)
             btnisdevil.disabled = true;
             btnisangel.disabled = true;
-            // 重設時間  要放在呼叫game()前
+            // 重設時間
             timeleft = 20;
             textTime.innerText = timeleft;
             // 設定每秒變換一次
@@ -405,7 +405,6 @@
             textScore.innerText = score;
             // 設定狀態為遊戲中
             inGame = true;
-
 
 
             for (let hole of holes) {
